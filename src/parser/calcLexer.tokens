@@ -1,0 +1,17 @@
+ADD=1
+SUB=2
+MUL=3
+DIV=4
+EQUAL=5
+OpenParen=6
+CloseParen=7
+NUMBER=8
+WhiteSpaces=9
+LineTerminator=10
+'+'=1
+'-'=2
+'*'=3
+'/'=4
+'='=5
+'('=6
+')'=7

@@ -11,6 +11,17 @@ export class HoverProvider implements monaco.languages.HoverProvider {
     const AST = getAST(content || '');
     const finder = new HoverFinder(position);
     ParseTreeWalker.DEFAULT.walk(finder, AST); // 遍历AST
+    const { result } = finder;
+    if (result.type === 'number') {
+      return {
+        contents: [
+          {
+            value: `数字${result.name}`,
+          },
+        ],
+        range: result.range,
+      };
+    }
     return {
       contents: [],
     };
@@ -26,7 +37,7 @@ const getRangeFromToken = (input: Token) => {
 class HoverFinder implements calcListener {
   result?: {
     range: monaco.Range;
-    type: 'string';
+    type: string;
     name?: string;
   };
   private position: monaco.Position;
@@ -35,7 +46,18 @@ class HoverFinder implements calcListener {
   }
 
   enterNumber(ctx: NumberContext) {
-    console.log(ctx);
+    if (!this.result) {
+      console.log(ctx);
+      const range = getRangeFromToken(ctx.start);
+      const matched = monaco.Range.containsPosition(range, this.position);
+      if (matched) {
+        this.result = {
+          range,
+          type: 'number',
+          name: ctx.start.text,
+        };
+      }
+    }
   }
 
   visitErrorNode() {
